@@ -29,6 +29,7 @@ class Estado {
   // Inicializacion Funciones
   bool EsIgual(const Estado& estado) const; 
   bool operator<(const Estado& estado) const;
+  bool operator>(const Estado& otro) const;
 
  private:
   int fila_;
