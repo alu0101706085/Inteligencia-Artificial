@@ -87,6 +87,8 @@ std::vector<Estado> Robot::AlgoritmoEstrella(std::string& mensaje) {
     }
     // El coste final es el coste G del último nodo del camino
     mensaje += "\nCoste: " + std::to_string(camino_final.back().GetCosteG()) + "\n";
+  } else {
+    mensaje += "No se ha encontrado ningún camino al destino.\n";
   }
 
   // Liberar memoria dinámica reservada

@@ -72,6 +72,9 @@ bool Mapa::EsMovimientoValido(int fila, int columna) {
   if (fila < 0 || fila >= GetNFilas() || columna < 0 || columna >= GetNColumnas()) {
     return false;
   }
+  if (matriz_[fila][columna] == -1) {
+    return false;
+  }
   return true;
 }
 
