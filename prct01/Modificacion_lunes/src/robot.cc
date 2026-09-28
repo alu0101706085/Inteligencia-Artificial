@@ -15,13 +15,13 @@
  * Explora el mapa utilizando listas de nodos abiertos y cerrados, evaluando el coste 
  * real (G) y la estimación heurística (H) para llegar al destino.
  * 
- * MODIFICACION: Elegir un nodo random de la lista abierta y trabajar con él.
+ * MODIFICACION: Elegir un nodo random de los 2 con mayor coste f de la lista abierta y trabajar con él. 
  * 
  * @param mensaje Referencia a una cadena de texto donde se concatenará el registro de iteraciones, el camino final y el coste total.
  * @return std::vector<Estado> Vector que contiene la secuencia de estados del camino óptimo desde el origen hasta el destino. Retorna un vector vacío si no se encuentra solución.
  */
 std::vector<Estado> Robot::AlgoritmoEstrella(std::string& mensaje) {
-  std::priority_queue<Estado, std::vector<Estado>, std::less<Estado>> lista_abierta;
+  std::priority_queue<Estado, std::vector<Estado>, std::less<Estado>> lista_abierta; // <- CAMBIO: Uso std::less para tener arriba los de mayor coste
   std::vector<std::vector<bool>> lista_cerrada(mapa_.GetNFilas(), std::vector<bool>(mapa_.GetNColumnas(), false));
   std::vector<std::pair<int, int>> cerrados_ordenados;
   std::vector<Estado*> historial; // Mantiene vivos los punteros de los nodos
