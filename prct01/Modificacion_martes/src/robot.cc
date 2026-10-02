@@ -5,7 +5,6 @@
 #include <queue>
 #include <deque>
 #include <list>
-#include <random> // Modificación
 
 #include "robot.h"
 
@@ -15,13 +14,11 @@
  * Explora el mapa utilizando listas de nodos abiertos y cerrados, evaluando el coste 
  * real (G) y la estimación heurística (H) para llegar al destino.
  * 
- * MODIFICACION: Elegir un nodo random de los 2 con mayor coste f de la lista abierta y trabajar con él. 
- * 
  * @param mensaje Referencia a una cadena de texto donde se concatenará el registro de iteraciones, el camino final y el coste total.
  * @return std::vector<Estado> Vector que contiene la secuencia de estados del camino óptimo desde el origen hasta el destino. Retorna un vector vacío si no se encuentra solución.
  */
 std::vector<Estado> Robot::AlgoritmoEstrella(std::string& mensaje) {
-  std::priority_queue<Estado, std::vector<Estado>, std::less<Estado>> lista_abierta; // <- CAMBIO: Uso std::less para tener arriba los de mayor coste
+  std::priority_queue<Estado, std::vector<Estado>, std::greater<Estado>> lista_abierta;
   std::vector<std::vector<bool>> lista_cerrada(mapa_.GetNFilas(), std::vector<bool>(mapa_.GetNColumnas(), false));
   std::vector<std::pair<int, int>> cerrados_ordenados;
   std::vector<Estado*> historial; // Mantiene vivos los punteros de los nodos
@@ -38,25 +35,9 @@ std::vector<Estado> Robot::AlgoritmoEstrella(std::string& mensaje) {
 
   std::vector<Estado> camino_final;
 
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  Estado estado_actual;
   while (!lista_abierta.empty()) {
-    if (lista_abierta.size() >= 2) {
-      Estado estado1 = lista_abierta.top();
-      lista_abierta.pop();
-      Estado estado2 = lista_abierta.top();
-      lista_abierta.pop();
-      std::uniform_int_distribution<int> distrib(0, 1);
-      int indice = distrib(gen);
-      std::vector<Estado> mas_grandes = { estado1, estado2 };
-      estado_actual = mas_grandes[indice];
-      if (mas_grandes[indice].EsIgual(estado1)) { lista_abierta.push(estado2); }
-      else { lista_abierta.push(estado1); }
-    } else {
-      estado_actual = lista_abierta.top();
-      lista_abierta.pop();
-    }
+    Estado estado_actual = lista_abierta.top();
+    lista_abierta.pop();
 
     if (lista_cerrada[estado_actual.GetFila()][estado_actual.GetColumna()]) {
       continue;
@@ -197,7 +178,7 @@ std::vector<Estado> Robot::ReconstruirCamino(Estado* estado) {
  * @return std::string Cadena de texto formateada que muestra la lista de abiertos y cerrados en coordenadas cartesianas.
  */
 std::string Robot::MostrarResultados(int iteracion, 
-                                     std::priority_queue<Estado, std::vector<Estado>, std::less<Estado>> copia_abiertos, 
+                                     std::priority_queue<Estado, std::vector<Estado>, std::greater<Estado>> copia_abiertos, 
                                      const std::vector<std::pair<int, int>>& cerrados) {
   std::string resultado = "Iteración " + std::to_string(iteracion);
   resultado += "\n";
@@ -239,9 +220,9 @@ std::string Robot::MostrarResultados(int iteracion,
  * @param camino Vector que contiene los estados pertenecientes al camino óptimo calculado.
  */
 void Robot::GuardarResultadosEnFicheros(std::string ruta_salida1, std::string ruta_salida2, std::string iteraciones, std::vector<Estado> camino) {
-  std::ofstream FicheroSalida1(ruta_salida1, std::ios::app);
+  std::ofstream FicheroSalida1(ruta_salida1);
   if (!FicheroSalida1) return;
-  std::ofstream FicheroSalida2(ruta_salida2, std::ios::app);
+  std::ofstream FicheroSalida2(ruta_salida2);
   if (!FicheroSalida2) return;
   std::vector<std::vector<bool>> es_camino(mapa_.GetNFilas(), std::vector<bool>(mapa_.GetNColumnas(), false));
   for (const auto& estado : camino) {
