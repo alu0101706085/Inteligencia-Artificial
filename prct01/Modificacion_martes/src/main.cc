@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 #include "estado.h"
 #include "mapa.h"
@@ -25,8 +26,12 @@ int main(int argc, char* argv[]) {
   mapa.CargarFichero(argv[1]);
   Robot robot(mapa.GetOrigen().first, mapa.GetOrigen().second, mapa);
   std::string iteraciones = "";
-  std::vector<Estado> camino = robot.AlgoritmoEstrella(iteraciones);
-  robot.GuardarResultadosEnFicheros(argv[2], argv[3], iteraciones, camino);
+  std::ofstream limpiar_mapa(argv[2]);
+  limpiar_mapa.clear();
+  for (int i{0}; i < 10; i++) {
+    std::vector<Estado> camino = robot.AlgoritmoEstrella(iteraciones);
+    robot.GuardarResultadosEnFicheros(argv[2], argv[3], iteraciones, camino);
+  }
   std::cout << iteraciones;
   return 0;
 }

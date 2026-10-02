@@ -5,6 +5,7 @@
 #include <queue>
 #include <deque>
 #include <list>
+#include <random>
 
 #include "robot.h"
 
@@ -13,6 +14,8 @@
  * 
  * Explora el mapa utilizando listas de nodos abiertos y cerrados, evaluando el coste 
  * real (G) y la estimación heurística (H) para llegar al destino.
+ * 
+ * MODIFICACION: Escoger de forma aleatoria el valor mayor o menor de la losta abierta.
  * 
  * @param mensaje Referencia a una cadena de texto donde se concatenará el registro de iteraciones, el camino final y el coste total.
  * @return std::vector<Estado> Vector que contiene la secuencia de estados del camino óptimo desde el origen hasta el destino. Retorna un vector vacío si no se encuentra solución.
@@ -35,9 +38,31 @@ std::vector<Estado> Robot::AlgoritmoEstrella(std::string& mensaje) {
 
   std::vector<Estado> camino_final;
 
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution distrb(0, 1);
   while (!lista_abierta.empty()) {
-    Estado estado_actual = lista_abierta.top();
-    lista_abierta.pop();
+    Estado estado_actual;
+    std::vector<Estado> temporal_abierta;
+    std::vector<Estado> temporal_copia_abierta;
+    if (lista_abierta.size() > 1) {
+      while(!lista_abierta.empty()) {
+        temporal_copia_abierta.emplace_back(lista_abierta.top());
+        lista_abierta.pop();
+      }
+      temporal_abierta.emplace_back(temporal_copia_abierta[0]);
+      temporal_abierta.emplace_back(temporal_copia_abierta[temporal_copia_abierta.size() - 1]);
+      int indice = distrb(gen);
+      estado_actual = temporal_abierta[indice];
+      for (const auto& elemento : temporal_copia_abierta) {
+        if (!elemento.EsIgual(estado_actual)) {
+          lista_abierta.emplace(elemento);
+        }
+      }
+    } else {
+      estado_actual = lista_abierta.top();
+      lista_abierta.pop();
+    }
 
     if (lista_cerrada[estado_actual.GetFila()][estado_actual.GetColumna()]) {
       continue;
@@ -220,9 +245,9 @@ std::string Robot::MostrarResultados(int iteracion,
  * @param camino Vector que contiene los estados pertenecientes al camino óptimo calculado.
  */
 void Robot::GuardarResultadosEnFicheros(std::string ruta_salida1, std::string ruta_salida2, std::string iteraciones, std::vector<Estado> camino) {
-  std::ofstream FicheroSalida1(ruta_salida1);
+  std::ofstream FicheroSalida1(ruta_salida1, std::ios::app);
   if (!FicheroSalida1) return;
-  std::ofstream FicheroSalida2(ruta_salida2);
+  std::ofstream FicheroSalida2(ruta_salida2, std::ios::app);
   if (!FicheroSalida2) return;
   std::vector<std::vector<bool>> es_camino(mapa_.GetNFilas(), std::vector<bool>(mapa_.GetNColumnas(), false));
   for (const auto& estado : camino) {
@@ -238,6 +263,7 @@ void Robot::GuardarResultadosEnFicheros(std::string ruta_salida1, std::string ru
     }
     FicheroSalida1 << "\n";
   }
+  FicheroSalida1 << "\n";
   FicheroSalida2 << iteraciones;
   FicheroSalida1.close();
   FicheroSalida2.close();

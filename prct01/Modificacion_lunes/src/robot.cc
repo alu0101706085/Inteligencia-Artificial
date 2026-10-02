@@ -257,6 +257,7 @@ void Robot::GuardarResultadosEnFicheros(std::string ruta_salida1, std::string ru
     }
     FicheroSalida1 << "\n";
   }
+  FicheroSalida1 << "\n";
   FicheroSalida2 << iteraciones;
   FicheroSalida1.close();
   FicheroSalida2.close();

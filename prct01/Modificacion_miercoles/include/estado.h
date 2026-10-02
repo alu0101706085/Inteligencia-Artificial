@@ -30,6 +30,7 @@ class Estado {
   bool EsIgual(const Estado& estado) const; 
   bool operator<(const Estado& estado) const;
   bool operator>(const Estado& otro) const;
+  bool operator!=(const Estado& otro) const;
 
  private:
   int fila_;
