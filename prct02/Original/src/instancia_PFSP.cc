@@ -20,7 +20,7 @@ InstanciaPFSP::InstanciaPFSP(const std::string& archivo) {
 
 int InstanciaPFSP::CalcularMakespan(const std::vector<int>& permutacion) const {
   std::vector<int> TiemposLibres(n_maquinas_, 0);
-  for (int k{0}; k < n_tareas_; k++) {
+  for (int k{0}; k < permutacion.size(); k++) {
     int indice = permutacion[k] - 1;
     TiemposLibres[0] = TiemposLibres[0] + matriz_tiempos_[0][indice]; // Primera máquina i = 0;
     for (int i{1}; i < n_maquinas_; i++) { // Resto de máquinas (hasta m - 1)

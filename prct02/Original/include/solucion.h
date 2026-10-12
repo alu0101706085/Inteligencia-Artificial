@@ -11,6 +11,7 @@ class Solucion {
   Solucion(std::vector<int> permutacion) : permutacion_(permutacion) {}
   int Get_Makespan() const { return makespan_; }
   std::vector<int> Get_Permutacion() const { return permutacion_; }
+  void Set_Makespan(int makespan) { makespan_ = makespan; }
   int Evaluar(const InstanciaPFSP& instancia);
   bool operator<(const Solucion& otro) const;
  private:

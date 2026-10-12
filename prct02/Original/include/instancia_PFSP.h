@@ -9,6 +9,7 @@ class InstanciaPFSP {
   InstanciaPFSP(const std::string& archivo);
   int Get_NTareas() const { return n_tareas_; }
   int Get_NMaquinas() const { return n_maquinas_; }
+  std::vector<std::vector<int>> Get_MatrizTiempos() const { return matriz_tiempos_; }
   int CalcularMakespan(const std::vector<int>& permutacion) const;
  private:
   int n_tareas_;
