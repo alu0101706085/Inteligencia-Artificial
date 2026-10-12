@@ -41,9 +41,10 @@ std::vector<Estado> Robot::AlgoritmoEstrella(std::string& mensaje) {
   std::random_device rd;
   std::mt19937 gen(rd());
   std::uniform_int_distribution distribucion(0, 1);
+  std::vector<Estado> temporal_abierto(2);
   while (!lista_abierta.empty()) {
     Estado estado_actual;
-    std::vector<Estado> temporal_abierto;
+    temporal_abierto.clear();
     if (lista_abierta.size() > 1) {
       temporal_abierto.emplace_back(lista_abierta.top());
       lista_abierta.pop();

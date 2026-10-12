@@ -19,6 +19,10 @@
  *             - argv[1]: Ruta al archivo de texto con la matriz del mapa de entrada.
  *             - argv[2]: Ruta al archivo de salida para guardar el mapa con el camino (*).
  *             - argv[3]: Ruta al archivo de salida para el registro completo de iteraciones.
+ * 
+ * MODIFICACION: Ejecuta el algoritmo y lo guarda 10 veces. Al tener una seleccion aleatoria, 
+ *               se puede observar como las ejecuciones tienen diferencia entre si.
+ * 
  * @return int Devuelve 0 al finalizar la ejecución correctamente.
  */
 int main(int argc, char* argv[]) {
@@ -28,6 +32,8 @@ int main(int argc, char* argv[]) {
   std::string iteraciones = "";
   std::ofstream limpiar_mapa(argv[2]);
   limpiar_mapa.clear();
+  std::ofstream limpiar_iteraciones(argv[3]);
+  limpiar_iteraciones.clear();
   for (int i{0}; i < 10; i++) {
     std::vector<Estado> camino = robot.AlgoritmoEstrella(iteraciones);
     robot.GuardarResultadosEnFicheros(argv[2], argv[3], iteraciones, camino);
