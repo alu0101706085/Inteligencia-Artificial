@@ -44,10 +44,10 @@ Solucion AlgoritmosReferencias::Alg_NEH(const InstanciaPFSP& instancia) {
   
   // Manejo resto de valores de la permutacion
   std::vector<int> temporal;
-  for (int i{2}; i < costes.size(); i++) {
+  for (size_t i{2}; i < costes.size(); i++) {
     int makespan_mas_bajo{999999};
     std::vector<int> mejor_permutacion;
-    for (int j{0}; j <= opcion_ganadora.size(); j++) {
+    for (size_t j{0}; j <= opcion_ganadora.size(); j++) {
       temporal = opcion_ganadora;
       temporal.insert(temporal.begin() + j, costes[i].first);
       Solucion opcion_X(temporal);
@@ -60,5 +60,6 @@ Solucion AlgoritmosReferencias::Alg_NEH(const InstanciaPFSP& instancia) {
     opcion_ganadora = mejor_permutacion;
   }
   Solucion ganador(opcion_ganadora);
+  ganador.Evaluar(instancia);
   return ganador;
 }

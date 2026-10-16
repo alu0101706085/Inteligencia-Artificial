@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <numeric>
 #include <utility>
+#include <fstream>
 
 #include "AlgoritmosReferencia.h"
 
@@ -93,14 +94,18 @@ void AlgoritmoGenetico::Reemplazo(std::vector<Solucion> lista) {
   }
   poblacion_ = lista;
   int indice_peor_individuo{0};
-  for (int i{0}; i < poblacion_.size(); i++) {
+  for (size_t i{0}; i < poblacion_.size(); i++) {
     if (poblacion_[indice_peor_individuo] < poblacion_[i]) indice_peor_individuo = i;
   }
   poblacion_[indice_peor_individuo] = solucion_;
 }
 
-void AlgoritmoGenetico::Ejecutar() {
+void AlgoritmoGenetico::Ejecutar(bool guardar_convergencia) {
   InicializarPoblacion();
+  std::ofstream fichero_grafica;
+  if (guardar_convergencia) {
+    fichero_grafica.open("convergencia.csv");
+  }
   while( n_evaluaciones_makespan_ < presupuesto_max_) {
     std::vector<Solucion> nueva_generacion;
     nueva_generacion.reserve(tam_poblacion_);
@@ -126,5 +131,11 @@ void AlgoritmoGenetico::Ejecutar() {
       nueva_generacion.emplace_back(hijo2);
     }
     Reemplazo(nueva_generacion);
+    if (guardar_convergencia) {
+      fichero_grafica << n_evaluaciones_makespan_ << "," << GetSolucion().Get_Makespan() << "\n";
+    }
+  }
+  if (guardar_convergencia) {
+    fichero_grafica.close();
   }
 }

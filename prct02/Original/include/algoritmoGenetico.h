@@ -15,12 +15,13 @@ class AlgoritmoGenetico {
                     instancia_(instancia), gen_(gen), tam_poblacion_(tam_poblacion), prob_cruce_(prob_cruce), 
                     prob_mutacion_(prob_mutacion), tam_torneo_(tam_torneo), presupuesto_max_(presupuesto_max), 
                     n_evaluaciones_makespan_(0), solucion_() {}
+  Solucion GetSolucion() const { return solucion_; }
   void InicializarPoblacion();
   Solucion SeleccionTorneo();
   std::pair<Solucion, Solucion> CruceOX(const Solucion& solucion1, const Solucion& solucion2);
   void Mutacion(Solucion& solucion);
   void Reemplazo(std::vector<Solucion> lista);
-  void Ejecutar();
+  void Ejecutar(bool guardar_convergencia = false);
  private:
   const InstanciaPFSP& instancia_;
   std::mt19937& gen_;
