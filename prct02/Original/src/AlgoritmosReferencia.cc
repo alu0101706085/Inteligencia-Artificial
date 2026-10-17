@@ -6,6 +6,22 @@
 #include <random>
 #include <functional>
 
+/**
+ * @brief Algoritmo de búsqueda aleatoria.
+ *
+ * Genera @p limite permutaciones aleatorias de las tareas, evalúa el makespan
+ * de cada una y devuelve la mejor encontrada.
+ *
+ * @param instancia Instancia del PFSP (número de tareas, máquinas y matriz de
+ *        tiempos).
+ * @param n_aleatorio Generador de números pseudoaleatorios (se modifica al
+ *        usarlo).
+ * @param limite Número de permutaciones aleatorias a generar y evaluar.
+ * @return Mejor solución encontrada (la de menor makespan), ya evaluada.
+ *
+ * @note Si @p limite es 0, se devuelve una solución sin permutación con
+ *       makespan inicial 999999.
+ */
 Solucion AlgoritmosReferencias::Alg_Aleatorio(const InstanciaPFSP& instancia, std::mt19937& n_aleatorio, int limite) {
   Solucion mejor_opcion;
   mejor_opcion.Set_Makespan(999999);
@@ -21,6 +37,25 @@ Solucion AlgoritmosReferencias::Alg_Aleatorio(const InstanciaPFSP& instancia, st
   return mejor_opcion;
 }
 
+/**
+ * @brief Heurística constructiva NEH (Nawaz, Enscore y Ham).
+ *
+ * El algoritmo se desarrolla en tres fases:
+ *  -# Calcula el tiempo total de procesamiento de cada tarea (suma de sus
+ *     tiempos en todas las máquinas) y las ordena de mayor a menor.
+ *  -# Evalúa las dos primeras tareas en ambos órdenes posibles y se queda con
+ *     la mejor secuencia parcial.
+ *  -# Para cada tarea restante (en el orden calculado), la prueba en todas las
+ *     posiciones posibles de la secuencia parcial y la inserta en la que
+ *     minimiza el makespan.
+ *
+ * @param instancia Instancia del PFSP (número de tareas, máquinas y matriz de
+ *        tiempos).
+ * @return Solución construida, ya evaluada.
+ *
+ * @note Las tareas se identifican con ids de 1 a n. Se asume que la instancia
+ *       tiene al menos dos tareas.
+ */
 Solucion AlgoritmosReferencias::Alg_NEH(const InstanciaPFSP& instancia) {
   std::vector<std::pair<int, int>> costes;
   for (int i{0}; i < instancia.Get_NTareas(); i++) {

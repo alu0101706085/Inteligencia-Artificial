@@ -4,20 +4,20 @@
 #include <algorithm>
 #include <stdexcept>
 
-InstanciaPFSP::InstanciaPFSP(const std::string& archivo) {
-  std::ifstream FicheroLectura(archivo);
-  if (!FicheroLectura.is_open()) {
-    throw std::runtime_error("No se pudo abrir el archivo");
-  }
-  FicheroLectura >> n_tareas_ >> n_maquinas_;
-  matriz_tiempos_.assign(n_maquinas_, std::vector<int>(n_tareas_));
-  for (int i{0}; i < n_maquinas_; i++) {
-    for (int j{0}; j < n_tareas_; j++) {
-      FicheroLectura >> matriz_tiempos_[i][j];
-    }
-  }
-}
-
+/**
+ * @brief Calcula el makespan de una permutación de tareas.
+ *
+ * Simula el paso de las tareas, en el orden indicado, por todas las máquinas.
+ * Se mantiene para cada máquina el instante en que queda libre: una tarea
+ * empieza en una máquina cuando ésta está libre y la tarea ha terminado en la
+ * máquina anterior, es decir, en el máximo de ambos instantes. El makespan es
+ * el instante en que la última tarea termina en la última máquina.
+ *
+ * @param permutacion Orden de procesamiento de las tareas (ids de 1 a n).
+ * @return Makespan de la permutación (tiempo total de finalización).
+ *
+ * @note Complejidad temporal O(n · m), con n tareas y m máquinas.
+ */
 int InstanciaPFSP::CalcularMakespan(const std::vector<int>& permutacion) const {
   std::vector<int> TiemposLibres(n_maquinas_, 0);
   for (size_t k{0}; k < permutacion.size(); k++) {

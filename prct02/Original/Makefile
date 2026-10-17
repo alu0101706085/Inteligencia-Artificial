@@ -1,6 +1,6 @@
 # Variables
 CC = g++
-CFLAGS = -std=c++17 -g -Wall -I./include -I./src
+CFLAGS = -std=c++17 -O2 -DNDEBUG -Wall -I./include -I./src
 TARGET = aa.exe
 
 # Directorios

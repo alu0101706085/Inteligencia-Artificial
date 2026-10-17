@@ -9,7 +9,6 @@
 
 class AlgoritmoGenetico {
  public:
-  AlgoritmoGenetico() = default;
   AlgoritmoGenetico(const InstanciaPFSP& instancia, std::mt19937& gen, int tam_poblacion,
                     double prob_cruce, double prob_mutacion, int tam_torneo, int presupuesto_max) :
                     instancia_(instancia), gen_(gen), tam_poblacion_(tam_poblacion), prob_cruce_(prob_cruce), 
