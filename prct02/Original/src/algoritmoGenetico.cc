@@ -23,7 +23,8 @@ void AlgoritmoGenetico::InicializarPoblacion() {
   poblacion_.reserve(tam_poblacion_);
   poblacion_.push_back(AlgoritmosReferencias::Alg_NEH(instancia_));
   solucion_ = poblacion_.front();
-  for (int i{1}; i < tam_poblacion_; i++) {
+  n_evaluaciones_makespan_++;
+  for (int i{1}; i < tam_poblacion_ && n_evaluaciones_makespan_ < presupuesto_max_; i++) {
     std::vector<int> tareas(instancia_.Get_NTareas());
     std::iota(tareas.begin(), tareas.end(), 1);
     std::shuffle(tareas.begin(), tareas.end(), gen_);
@@ -137,7 +138,6 @@ void AlgoritmoGenetico::Mutacion(Solucion& solucion) {
     int origen = distribucion(gen_);
     int destino = distribucion(gen_);
     while (origen == destino) {
-      origen = distribucion(gen_);
       destino = distribucion(gen_);
     }
     std::vector<int> permutacion_mutada = solucion.Get_Permutacion();
@@ -197,8 +197,9 @@ void AlgoritmoGenetico::Ejecutar(bool guardar_convergencia) {
   while( n_evaluaciones_makespan_ < presupuesto_max_) {
     std::vector<Solucion> nueva_generacion;
     nueva_generacion.reserve(tam_poblacion_);
-    // Hacemos la mitad de iteraciones pq en cada cruce nacen 2 hijos
-    for (int i{0}; i < tam_poblacion_ / 2; i++) { 
+    size_t limite_descendencia = static_cast<size_t>(std::min(
+        tam_poblacion_, presupuesto_max_ - n_evaluaciones_makespan_));
+    while (nueva_generacion.size() < limite_descendencia) {
       Solucion padre1 = SeleccionTorneo();
       Solucion padre2 = SeleccionTorneo();
       Solucion hijo1;
@@ -216,7 +217,9 @@ void AlgoritmoGenetico::Ejecutar(bool guardar_convergencia) {
       Mutacion(hijo1);
       Mutacion(hijo2);
       nueva_generacion.emplace_back(hijo1);
-      nueva_generacion.emplace_back(hijo2);
+      if (nueva_generacion.size() < limite_descendencia) {
+        nueva_generacion.emplace_back(hijo2);
+      }
     }
     Reemplazo(std::move(nueva_generacion));
     if (guardar_convergencia) {

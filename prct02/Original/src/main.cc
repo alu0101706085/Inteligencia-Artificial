@@ -29,7 +29,7 @@ struct Configuracion {
 /**
  * @brief Lee los parámetros de la línea de comandos y la instancia del fichero.
  *
- * Los argumentos esperados son: @c archivo N E K Pc Pm. El fichero de la
+ * Los argumentos esperados son: @c archivo N E K Pc Pm [semilla]. El fichero de la
  * instancia tiene una primera línea de cabecera que se ignora, una segunda con
  * número de trabajos, número de máquinas, semilla, cota superior y cota
  * inferior, una tercera línea que se ignora y, por último, la matriz de
@@ -131,8 +131,8 @@ int main(int argc, char* argv[]) {
     sumatoria += pow(resultados_cmax[i] - promedio_cmax, 2);
   }
   double desviacion_estandar = sqrt(sumatoria / resultados_cmax.size());
-  double rpd_ub = ((BestCmax - datos.upper_bound) / (double)datos.upper_bound) * 100.0;
-  double rpd_neh = ((BestCmax - (double)CmaxNEH.Get_Makespan()) / (double)CmaxNEH.Get_Makespan()) * 100;
+  double rpd_ub = ((promedio_cmax - datos.upper_bound) / datos.upper_bound) * 100.0;
+  double rpd_neh = ((promedio_cmax - (double)CmaxNEH.Get_Makespan()) / (double)CmaxNEH.Get_Makespan()) * 100;
   std::ofstream FicheroSalida("tabla_resultados.csv", std::ios::app);
   FicheroSalida << argv[1] << "," << datos.instancia.Get_NTareas() << "," << datos.instancia.Get_NMaquinas() << "," << BestCmax 
                 << "," << promedio_cmax << "," << desviacion_estandar << "," << CmaxNEH.Get_Makespan() << "," << rpd_ub 
