@@ -131,8 +131,8 @@ int main(int argc, char* argv[]) {
     sumatoria += pow(resultados_cmax[i] - promedio_cmax, 2);
   }
   double desviacion_estandar = sqrt(sumatoria / resultados_cmax.size());
-  double rpd_ub = ((promedio_cmax - datos.upper_bound) / datos.upper_bound) * 100.0;
-  double rpd_neh = ((promedio_cmax - (double)CmaxNEH.Get_Makespan()) / (double)CmaxNEH.Get_Makespan()) * 100;
+  double rpd_ub = (((double)BestCmax - datos.upper_bound) / (double)datos.upper_bound) * 100.0;
+  double rpd_neh = ((BestCmax - (double)CmaxNEH.Get_Makespan()) / (double)CmaxNEH.Get_Makespan()) * 100;
   std::ofstream FicheroSalida("tabla_resultados.csv", std::ios::app);
   FicheroSalida << argv[1] << "," << datos.instancia.Get_NTareas() << "," << datos.instancia.Get_NMaquinas() << "," << BestCmax 
                 << "," << promedio_cmax << "," << desviacion_estandar << "," << CmaxNEH.Get_Makespan() << "," << rpd_ub 
