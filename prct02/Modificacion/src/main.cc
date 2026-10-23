@@ -5,7 +5,7 @@
 #include <cmath>
 #include <chrono>
 
-#include "algoritmoGenetico.h"
+#include "../include/algoritmoGenetico.h"
 #include "AlgoritmosReferencia.h"
 #include "instancia_PFSP.h"
 #include "solucion.h"
@@ -24,6 +24,7 @@ struct Configuracion {
   int K_tam_torneo;
   double Pc_prob_cruce;
   double Pm_prob_mutacion;
+  int tipo_reemplazo;
 };
 
 /**
@@ -44,7 +45,7 @@ struct Configuracion {
  *       @c exit(1).
  */
 Configuracion CargarDatos(int argc, char* argv[]) {
-  if (argc != 7 && argc != 8) {
+  if (argc != 8 && argc != 9) {
     std::cout << "Error: Numero incorrecto de parámetros" << std::endl;
     std::cout << "Uso: programa.exe archivo N E K Pc Pm [semilla]" << std::endl;
     exit(1);
@@ -54,25 +55,24 @@ Configuracion CargarDatos(int argc, char* argv[]) {
   int K = std::stoi(argv[4]);
   double Pc = std::stod(argv[5]);
   double Pm = std::stod(argv[6]);
+  int tipo_reemplazo = std::stoi(argv[7]);
   std::ifstream Fichero(argv[1]);
   if (!Fichero){
     std::cout << "No se pudo abrir el fichero de lectura" << std::endl;
     exit(1);
   }
-  std::string linea_basura;
-  std::getline(Fichero, linea_basura); 
-  int n_trabajos, n_maquinas, semilla, upper_bound, lower_bound;
-  Fichero >> n_trabajos >> n_maquinas >> semilla >> upper_bound >> lower_bound;
-  std::getline(Fichero, linea_basura); // Este solo lee el final de la linea ('\n')
-  std::getline(Fichero, linea_basura); 
+  int n_trabajos, n_maquinas;
+  Fichero >> n_trabajos >> n_maquinas;
   std::vector<std::vector<int>> tiempo_procesado(n_maquinas, std::vector<int>(n_trabajos));
   for (int i{0}; i < n_maquinas; i++) {
     for (int j{0}; j < n_trabajos; j++) {
       Fichero >> tiempo_procesado[i][j];
     }
   }
+  int upper_bound = 0; // Fake upper_bound
+  int semilla = (argc == 9) ? std::stoi(argv[8]) : 1234; 
   InstanciaPFSP instancia(n_trabajos, n_maquinas, tiempo_procesado);
-  Configuracion config{instancia, upper_bound, (argc == 8 ? std::stoi(argv[7]) : semilla), N, E, K, Pc, Pm};
+  Configuracion config{instancia, upper_bound, (argc == 9 ? std::stoi(argv[8]) : semilla), N, E, K, Pc, Pm, tipo_reemplazo};
   Fichero.close();
   return config;
 }
@@ -109,7 +109,7 @@ int main(int argc, char* argv[]) {
     std::mt19937 gen(datos.semilla_base + i);
     bool hacer_grafica = (i == 0);
     AlgoritmoGenetico genetico(datos.instancia, gen, datos.N_tam_poblacion, datos.Pc_prob_cruce, datos.Pm_prob_mutacion, 
-                      datos.K_tam_torneo, datos.E_evaluaciones_max);
+                      datos.K_tam_torneo, datos.E_evaluaciones_max, datos.tipo_reemplazo);
     auto inicio = std::chrono::steady_clock::now();
     genetico.Ejecutar(hacer_grafica);
     tiempo_total += std::chrono::duration<double>(std::chrono::steady_clock::now() - inicio).count();
@@ -131,7 +131,7 @@ int main(int argc, char* argv[]) {
     sumatoria += pow(resultados_cmax[i] - promedio_cmax, 2);
   }
   double desviacion_estandar = sqrt(sumatoria / resultados_cmax.size());
-  double rpd_ub = (((double)BestCmax - datos.upper_bound) / (double)datos.upper_bound) * 100.0;
+  double rpd_ub = 0.0;
   double rpd_neh = ((BestCmax - (double)CmaxNEH.Get_Makespan()) / (double)CmaxNEH.Get_Makespan()) * 100;
   std::ofstream FicheroSalida("tabla_resultados.csv", std::ios::app);
   FicheroSalida << argv[1] << "," << datos.instancia.Get_NTareas() << "," << datos.instancia.Get_NMaquinas() << "," << BestCmax 

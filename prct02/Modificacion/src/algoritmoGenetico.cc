@@ -1,4 +1,4 @@
-#include "algoritmoGenetico.h"
+#include "../include/algoritmoGenetico.h"
 
 #include <algorithm>
 #include <numeric>
@@ -182,7 +182,7 @@ void AlgoritmoGenetico::Reemplazo(std::vector<Solucion> lista) {
  *  -# Cruce OX con probabilidad @c prob_cruce_ (si no hay cruce, los hijos
  *     son copias de los padres).
  *  -# Mutación de ambos hijos.
- *  -# Reemplazo generacional con elitismo.
+ *  -# Reemplazo Modificacion con elitismo.
  *
  * @param guardar_convergencia Si es @c true, se escribe en el fichero
  *        @c convergencia.csv una línea por generación con el formato
@@ -221,7 +221,13 @@ void AlgoritmoGenetico::Ejecutar(bool guardar_convergencia) {
         nueva_generacion.emplace_back(hijo2);
       }
     }
-    Reemplazo(std::move(nueva_generacion));
+    // <-- NUEVO M5 -->
+    if (tipo_reemplazo_ == 0) {
+        Reemplazo(std::move(nueva_generacion));
+    } else {
+        ReemplazoModificacion(std::move(nueva_generacion));
+    }
+    // <-------------->
     if (guardar_convergencia) {
       fichero_grafica << n_evaluaciones_makespan_ << "," << GetSolucion().Get_Makespan() << "\n";
     }
@@ -229,4 +235,45 @@ void AlgoritmoGenetico::Ejecutar(bool guardar_convergencia) {
   if (guardar_convergencia) {
     fichero_grafica.close();
   }
+}
+
+void AlgoritmoGenetico::ReemplazoModificacion(std::vector<Solucion> lista) {
+  // Evaluar a los hijos si no lo están (para que todos tengan Cmax)
+  for (auto& elemento : lista) {
+    elemento.Evaluar(instancia_);
+    n_evaluaciones_makespan_++;
+    if (elemento < solucion_) solucion_ = elemento;
+  }
+  int N = tam_poblacion_;
+  // Juntar P (poblacion_) y P' (lista)
+  std::vector<Solucion> combinada = poblacion_;
+  combinada.insert(combinada.end(), lista.begin(), lista.end());
+  // Eliminar duplicados por secuencia
+  std::vector<Solucion> unicos;
+  std::vector<Solucion> duplicados;
+  for (const auto& sol : combinada) {
+    bool es_duplicado = false;
+    for (const auto& u : unicos) {
+      if (sol.Get_Permutacion() == u.Get_Permutacion()) {
+        es_duplicado = true;
+        break;
+      }
+    }
+    if (es_duplicado) duplicados.push_back(sol);
+    else unicos.push_back(sol);
+  }
+  // Quedarse con los N primeros
+  std::vector<Solucion> nueva_poblacion;
+  for (size_t i = 0; i < N && i < unicos.size(); ++i) {
+    nueva_poblacion.push_back(unicos[i]);
+  }
+  // Rellenar con duplicados si faltan
+  if (nueva_poblacion.size() < N) {
+    int faltantes = N - nueva_poblacion.size();
+    for (int i = 0; i < faltantes; ++i) {
+      nueva_poblacion.push_back(duplicados[i]);
+    }
+  }
+  // Guardar la nueva población
+  poblacion_ = std::move(nueva_poblacion);
 }

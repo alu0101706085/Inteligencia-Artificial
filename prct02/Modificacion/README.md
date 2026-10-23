@@ -52,23 +52,24 @@ make clean
 ### Una instancia
 
 ```bash
-./aa.exe <instancia> <N> <E> <K> <Pc> <Pm> [semilla]
+./aa.exe <instancia> <N> <E> <K> <Pc> <Pm> <tipo_reemplazo> [semilla]
 ```
 
 | Parámetro   | Descripción                                                        |
-|-------------|--------------------------------------------------------------------|
-| `instancia` | Ruta al fichero `.fsp` de la instancia                             |
-| `N`         | Tamaño de la población                                             |
-| `E`         | Número máximo de evaluaciones (criterio de parada)                 |
-| `K`         | Tamaño del torneo (selección por torneo)                           |
-| `Pc`        | Probabilidad de cruce (0–1)                                        |
-| `Pm`        | Probabilidad de mutación (0–1)                                     |
-| `semilla`   | (Opcional) Semilla base. Si se omite, se usa la que trae la instancia |
+|------------------|--------------------------------------------------------------------|
+| `instancia`      | Ruta al fichero `.fsp` de la instancia                             |
+| `N`              | Tamaño de la población                                             |
+| `E`              | Número máximo de evaluaciones (criterio de parada)                 |
+| `K`              | Tamaño del torneo (selección por torneo)                           |
+| `Pc`             | Probabilidad de cruce (0–1)                                        |
+| `Pm`             | Probabilidad de mutación (0–1)                                     |
+| `tipo_reemplazo` | Probabilidad de mutación (0–1)                                     |
+| `semilla`        | (Opcional) Semilla base. Si se omite, se usa la que trae la instancia |
 
 Ejemplo (los parámetros usados en los experimentos):
 
 ```bash
-./aa.exe ./instancias/tai20_5_1.fsp 100 50000 2 0.8 0.1
+./aa.exe ./instancias/tai20_5_1.fsp 100 50000 2 0.8 0.1 1
 ```
 
 También se puede lanzar un ejemplo directamente con:
@@ -77,7 +78,7 @@ También se puede lanzar un ejemplo directamente con:
 make run
 ```
 
-que equivale a ejecutar `tai20_5_0.fsp` con `N=100, E=50000, K=2, Pc=0.8, Pm=0.1`.
+que equivale a ejecutar `tai20_5_0.fsp` con `N=100, E=50000, K=2, Pc=0.8, Pm=0.1, tipo_reemplazo=1`.
 
 ### Todas las instancias (por lotes)
 

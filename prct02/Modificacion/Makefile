@@ -39,7 +39,7 @@ clean:
 
 # Ejecutar (Ejemplo con parámetros por defecto)
 run: all
-	./$(TARGET) ./instancias/tai20_5_0.fsp 100 50000 2 0.8 0.1
+	./$(TARGET) ./VFR20_10_9_Modificación5.txt 100 50000 2 0.8 0.1 1
 
 # Ayuda
 help:

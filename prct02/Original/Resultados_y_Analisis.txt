@@ -3,8 +3,9 @@
  Resultados, analisis y respuestas a T7
 =====================================================================
 
-Configuracion utilizada (COMPLETAR con los parametros reales):
+Configuracion utilizada:
   - Tamano de poblacion: 100
+  - Tamano de torneo: 2
   - Cruce: OX (prob. = [0.8])
   - Mutacion: por insercion  (prob. = [0.1])
   - Numero de ejecuciones por instancia: 50000
